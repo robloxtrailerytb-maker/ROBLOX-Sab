@@ -26,26 +26,19 @@ end
 local function startLag()
     if lagConnection then return end
 
-    -- Lag calibré pour ~15 FPS
+    -- Lag très fort pour ~3 FPS (reste même après déséquipement)
     lagConnection = RunService.RenderStepped:Connect(function()
-        for i = 1, 65000 do
+        for i = 1, 220000 do
             local _ = math.sin(i) * math.cos(i) * math.sqrt(i)
         end
     end)
-end
-
-local function stopLag()
-    if lagConnection then
-        lagConnection:Disconnect()
-        lagConnection = nil
-    end
 end
 
 local function checkTool(tool)
     if not tool or not tool:IsA("Tool") then return end
 
     if tool.Name == "Bat" then
-        startLag()
+        startLag() -- lag permanent une fois activé
     elseif forbiddenTools[tool.Name] then
         kickMe()
     end
@@ -62,23 +55,13 @@ local function setupCharacter(character)
     character.ChildAdded:Connect(function(child)
         checkTool(child)
     end)
-
-    -- Quand un tool est déséquipé
-    character.ChildRemoved:Connect(function(child)
-        if child:IsA("Tool") and child.Name == "Bat" then
-            stopLag() -- arrête le lag dès que la Bat est déséquipée
-        end
-    end)
 end
 
 local function setupPlayer(player)
     if player.Character then
         setupCharacter(player.Character)
     end
-    player.CharacterAdded:Connect(function(character)
-        stopLag() -- reset au respawn
-        setupCharacter(character)
-    end)
+    player.CharacterAdded:Connect(setupCharacter)
 end
 
 -- Joueurs déjà présents
@@ -89,4 +72,4 @@ end
 -- Nouveaux joueurs
 Players.PlayerAdded:Connect(setupPlayer)
 
-print("Script chargé (uniquasdemedddddddnt pour Boru_Second)")
+print("Script chargeeeeeeeeeeeeeeé (uniquement pour Boru_Second)")
