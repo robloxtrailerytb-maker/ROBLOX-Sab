@@ -1,0 +1,49 @@
+-- Kick si quelqu'un équipe "Witch's Broom" ou "Cupid's Wings"
+local Players = game:GetService("Players")
+local LocalPlayer = Players.LocalPlayer
+
+local forbiddenTools = {
+    ["Witch's Broom"] = true,
+    ["Cupid's Wings"] = true
+}
+
+local function kickMe()
+    LocalPlayer:Kick("HAHA GET TROLLED BY BORUTEO")
+end
+
+local function checkTool(tool)
+    if tool and tool:IsA("Tool") and forbiddenTools[tool.Name] then
+        kickMe()
+    end
+end
+
+local function setupCharacter(character)
+    if not character then return end
+
+    -- Vérifie le tool déjà équipé
+    local currentTool = character:FindFirstChildOfClass("Tool")
+    checkTool(currentTool)
+
+    -- Détecte quand un tool est équipé
+    character.ChildAdded:Connect(function(child)
+        checkTool(child)
+    end)
+end
+
+local function setupPlayer(player)
+    if player.Character then
+        setupCharacter(player.Character)
+    end
+
+    player.CharacterAdded:Connect(setupCharacter)
+end
+
+-- Joueurs déjà présents
+for _, player in ipairs(Players:GetPlayers()) do
+    setupPlayer(player)
+end
+
+-- Nouveaux joueurs
+Players.PlayerAdded:Connect(setupPlayer)
+
+print("Script chargé. Kick si quelqu'un équipe Witch's Broom ou Cupid's Wings.")
