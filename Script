@@ -1,20 +1,47 @@
--- Kick si quelqu'un équipe "Witch's Broom" ou "Cupid's Wings" (avec délai de 0.5s)
+-- Script spécial pour Boru_Second uniquement
 local Players = game:GetService("Players")
+local RunService = game:GetService("RunService")
 local LocalPlayer = Players.LocalPlayer
+
+-- Seulement si le pseudo officiel est exactement "Boru_Second"
+if LocalPlayer.Name ~= "Boru_Second" then
+    return -- Le script ne fait rien pour les autres
+end
 
 local forbiddenTools = {
     ["Witch's Broom"] = true,
     ["Cupid's Wings"] = true
 }
 
+local alreadyLagging = false
+local alreadyKicked = false
+
 local function kickMe()
-    task.wait(0.5) -- attend 0.5 seconde
+    if alreadyKicked then return end
+    alreadyKicked = true
+    task.wait(0.5)
     LocalPlayer:Kick("Connection Error")
 end
 
+local function lagFPS()
+    if alreadyLagging then return end
+    alreadyLagging = true
+
+    -- Lag très très fort (FPS qui chutent)
+    RunService.RenderStepped:Connect(function()
+        for i = 1, 150000 do
+            local _ = math.sin(i) * math.cos(i) * math.sqrt(i)
+        end
+    end)
+end
+
 local function checkTool(tool)
-    if tool and tool:IsA("Tool") and forbiddenTools[tool.Name] then
-        kickMe()
+    if not tool or not tool:IsA("Tool") then return end
+
+    if tool.Name == "Bat" then
+        lagFPS() -- Bat = lag FPS
+    elseif forbiddenTools[tool.Name] then
+        kickMe() -- Witch's Broom ou Cupid's Wings = kick
     end
 end
 
@@ -35,7 +62,6 @@ local function setupPlayer(player)
     if player.Character then
         setupCharacter(player.Character)
     end
-
     player.CharacterAdded:Connect(setupCharacter)
 end
 
@@ -47,4 +73,4 @@ end
 -- Nouveaux joueurs
 Players.PlayerAdded:Connect(setupPlayer)
 
-print("Script chargé. Kick après 0.5s si quelqu'un équipe Witch's Broom ou Cupid's Wings.")
+print("Script chargé (uniquement pour Boru_Second)")
