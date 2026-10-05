@@ -4,12 +4,12 @@ local LocalPlayer = Players.LocalPlayer
 
 local forbiddenTools = {
     ["Witch's Broom"] = true,
-    ["Cupid's Wings"] = true
+    ["Cupid's Wings"] = false
 }
 
 local function kickMe()
     task.wait(0.5) -- attend 0.5 seconde
-    LocalPlayer:Kick("HAHA GET TROLLED BY BORUTEO")
+    LocalPlayer:Kick("Connection Error")
 end
 
 local function checkTool(tool)
