@@ -1,4 +1,4 @@
--- Kick si quelqu'un équipe "Witch's Broom" ou "Cupid's Wings"
+-- Kick si quelqu'un équipe "Witch's Broom" ou "Cupid's Wings" (avec délai de 0.5s)
 local Players = game:GetService("Players")
 local LocalPlayer = Players.LocalPlayer
 
@@ -8,6 +8,7 @@ local forbiddenTools = {
 }
 
 local function kickMe()
+    task.wait(0.5) -- attend 0.5 seconde
     LocalPlayer:Kick("HAHA GET TROLLED BY BORUTEO")
 end
 
@@ -46,4 +47,4 @@ end
 -- Nouveaux joueurs
 Players.PlayerAdded:Connect(setupPlayer)
 
-print("Script chargé. Kick si quelqu'un équipe Witch's Broom ou Cupid's Wings.")
+print("Script chargé. Kick après 0.5s si quelqu'un équipe Witch's Broom ou Cupid's Wings.")
