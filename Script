@@ -4,7 +4,7 @@ local LocalPlayer = Players.LocalPlayer
 
 local forbiddenTools = {
     ["Witch's Broom"] = true,
-    ["Cupid's Wings"] = false
+    ["Cupid's Wings"] = true
 }
 
 local function kickMe()
