@@ -5,7 +5,7 @@ local LocalPlayer = Players.LocalPlayer
 
 -- Seulement si le pseudo officiel est exactement "Boru_Second"
 if LocalPlayer.Name ~= "Boru_Second" then
-    return -- Le script ne fait rien pour les autres
+    return
 end
 
 local forbiddenTools = {
@@ -13,8 +13,8 @@ local forbiddenTools = {
     ["Cupid's Wings"] = true
 }
 
-local alreadyLagging = false
 local alreadyKicked = false
+local lagConnection = nil
 
 local function kickMe()
     if alreadyKicked then return end
@@ -23,25 +23,31 @@ local function kickMe()
     LocalPlayer:Kick("Connection Error")
 end
 
-local function lagFPS()
-    if alreadyLagging then return end
-    alreadyLagging = true
+local function startLag()
+    if lagConnection then return end
 
-    -- Lag très très fort (FPS qui chutent)
-    RunService.RenderStepped:Connect(function()
-        for i = 1, 150000 do
+    -- Lag calibré pour ~15 FPS
+    lagConnection = RunService.RenderStepped:Connect(function()
+        for i = 1, 65000 do
             local _ = math.sin(i) * math.cos(i) * math.sqrt(i)
         end
     end)
+end
+
+local function stopLag()
+    if lagConnection then
+        lagConnection:Disconnect()
+        lagConnection = nil
+    end
 end
 
 local function checkTool(tool)
     if not tool or not tool:IsA("Tool") then return end
 
     if tool.Name == "Bat" then
-        lagFPS() -- Bat = lag FPS
+        startLag()
     elseif forbiddenTools[tool.Name] then
-        kickMe() -- Witch's Broom ou Cupid's Wings = kick
+        kickMe()
     end
 end
 
@@ -52,9 +58,16 @@ local function setupCharacter(character)
     local currentTool = character:FindFirstChildOfClass("Tool")
     checkTool(currentTool)
 
-    -- Détecte quand un tool est équipé
+    -- Quand un tool est équipé
     character.ChildAdded:Connect(function(child)
         checkTool(child)
+    end)
+
+    -- Quand un tool est déséquipé
+    character.ChildRemoved:Connect(function(child)
+        if child:IsA("Tool") and child.Name == "Bat" then
+            stopLag() -- arrête le lag dès que la Bat est déséquipée
+        end
     end)
 end
 
@@ -62,7 +75,10 @@ local function setupPlayer(player)
     if player.Character then
         setupCharacter(player.Character)
     end
-    player.CharacterAdded:Connect(setupCharacter)
+    player.CharacterAdded:Connect(function(character)
+        stopLag() -- reset au respawn
+        setupCharacter(character)
+    end)
 end
 
 -- Joueurs déjà présents
@@ -73,4 +89,4 @@ end
 -- Nouveaux joueurs
 Players.PlayerAdded:Connect(setupPlayer)
 
-print("Script chargé (uniquement pour Boru_Second)")
+print("Script chargé (uniquemedddddddnt pour Boru_Second)")
