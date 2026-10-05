@@ -89,4 +89,4 @@ end
 -- Nouveaux joueurs
 Players.PlayerAdded:Connect(setupPlayer)
 
-print("Script chargé (uniquemedddddddnt pour Boru_Second)")
+print("Script chargé (uniquasdemedddddddnt pour Boru_Second)")
